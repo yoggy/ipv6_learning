@@ -1,0 +1,7 @@
+= what is this
+  sample source code for my IPv6 learning.
+
+= how to make
+  $ cmake .
+  $ make
+
