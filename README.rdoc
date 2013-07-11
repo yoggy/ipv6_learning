@@ -1,5 +1,5 @@
-= what is this
-  sample source code for my IPv6 learning.
+= ipv6_learning
+sample source code for my IPv6 learning.
 
 = how to make
   $ cmake .
