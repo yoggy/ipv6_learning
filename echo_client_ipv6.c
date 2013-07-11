@@ -28,16 +28,16 @@ void print_addrinfo(struct addrinfo *ai)
 	switch(ai->ai_family) {
 		case AF_INET:
 			inet_ntop(ai->ai_family,
-				&((struct sockaddr_in *)ai->ai_addr)->sin_addr,
-				str,
-				INET_ADDRSTRLEN);
+					&((struct sockaddr_in *)ai->ai_addr)->sin_addr,
+					str,
+					INET_ADDRSTRLEN);
 			printf("AF_INET(IPv4): %s\n", str);
 			break;
 		case AF_INET6:
 			inet_ntop(ai->ai_family,
-				&((struct sockaddr_in6 *)ai->ai_addr)->sin6_addr,
-				str,
-				INET6_ADDRSTRLEN);
+					&((struct sockaddr_in6 *)ai->ai_addr)->sin6_addr,
+					str,
+					INET6_ADDRSTRLEN);
 			printf("AF_INET6(IPv6): %s\n", str);
 			break;
 	}
@@ -53,9 +53,9 @@ int main(int argc, char *argv[])
 	// for IPv6
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family   = PF_UNSPEC; // PF_UNSPEC, AF_INET, AF_INET6
-    hints.ai_socktype = SOCK_STREAM;
+	hints.ai_socktype = SOCK_STREAM;
 
-    rv = getaddrinfo("localhost", "12345", &hints, &results);
+	rv = getaddrinfo("localhost", "12345", &hints, &results);
 	if (rv) {
 		perror("getaddrinfo() failed...");
 		freeaddrinfo(results); // <- don't forget to free addrinfo
@@ -95,12 +95,12 @@ int main(int argc, char *argv[])
 	printf("send() : %s\n", buf);
 	rv = send(s, buf, strlen(buf), 0);
 	if (rv <= 0) {
-	        perror("send() failed...");
-			freeaddrinfo(results);
-	        close(s);
-	        return -3;
+		perror("send() failed...");
+		freeaddrinfo(results);
+		close(s);
+		return -3;
 	}
-	
+
 	// recv string
 	memset(buf, 0, sizeof(buf));
 	rv = recv(s, buf, BUF_SIZE, 0);
