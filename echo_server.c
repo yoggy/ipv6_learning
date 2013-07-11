@@ -6,7 +6,6 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
-
 int main(int argc, char *argv[])
 {
 	int ss, cs;
@@ -28,7 +27,12 @@ int main(int argc, char *argv[])
 	hints.ai_flags    = AI_PASSIVE;
 
 	rv = getaddrinfo(NULL, "12345", &hints, &res);
-	if (rv != 0) {
+	if (rv == EAI_FAMILY) {
+		// fallback ipv4
+		hints.ai_family   = AF_INET;
+		rv = getaddrinfo(NULL, "12345", &hints, &res);
+	}
+	else if (rv == EAI_SYSTEM || rv != 0) {
 		fprintf(stderr, "getaddrinfo() failed...%s\n", gai_strerror(rv));
 		return -1;
 	}
