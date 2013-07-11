@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <stddef.h>
 #include <sys/socket.h>
-#include <arpa/inet.h>
+#include <netinet/in.h>
 #include <netdb.h>
 
 #define BUF_SIZE	1024
@@ -34,17 +34,15 @@ int main(int argc, char *argv[])
 	struct sockaddr_in6 addr;
 	char buf[BUF_SIZE];
 
-	printf("sizeof(sockaddr_in6) = %ld\n", sizeof(addr)); // 28
-	printf("sin6_len    offset = %ld\n", offsetof(struct sockaddr_in6, sin6_len));    // 0
-	printf("sin6_family offset = %ld\n", offsetof(struct sockaddr_in6, sin6_family)); // 1
-	printf("sin6_port   offset = %ld\n", offsetof(struct sockaddr_in6, sin6_port));   // 2
-	printf("sin6_addr   offset = %ld\n", offsetof(struct sockaddr_in6, sin6_addr));   // 8
+	printf("sizeof(sockaddr_in6) = %d\n", sizeof(addr)); // 28
+	printf("sin6_family offset = %d\n", offsetof(struct sockaddr_in6, sin6_family)); // 1
+	printf("sin6_port   offset = %d\n", offsetof(struct sockaddr_in6, sin6_port));   // 2
+	printf("sin6_addr   offset = %d\n", offsetof(struct sockaddr_in6, sin6_addr));   // 8
 	printf("AF_INET6 = %d\n", AF_INET6);       // 30
 	printf("SOCK_STREAM = %d\n", SOCK_STREAM); // 1
 
 	// for IPv6
 	memset(&addr, 0, sizeof(addr));
-	addr.sin6_len        = 28;
 	addr.sin6_family     = 30;
 	addr.sin6_port       = htons(12345);
 	addr.sin6_addr.s6_addr[15] = 1; // ::1

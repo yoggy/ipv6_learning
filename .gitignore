@@ -1,0 +1,12 @@
+*.swp
+*.o
+CMakeCache.txt
+CMakeFiles
+Makefile
+cmake_install.cmake
+echo_client_ipv4
+echo_client_ipv6
+echo_client_ipv6_simple
+echo_client_ipv6_simple2
+echo_server
+

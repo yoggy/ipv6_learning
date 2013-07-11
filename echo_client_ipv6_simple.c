@@ -3,7 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/socket.h>
-#include <arpa/inet.h>
+#include <netinet/in.h>
 #include <netdb.h>
 
 #define BUF_SIZE	1024
@@ -36,7 +36,6 @@ int main(int argc, char *argv[])
 
 	// for IPv6
 	memset(&addr, 0, sizeof(addr));
-	addr.sin6_len        = sizeof(addr);
 	addr.sin6_family     = AF_INET6;
 	addr.sin6_port       = htons(12345);
 	memset(addr.sin6_addr.s6_addr, 0, sizeof(struct in6_addr));
