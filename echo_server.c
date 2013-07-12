@@ -4,7 +4,31 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include <netdb.h>
+
+void print_addrinfo(struct addrinfo *ai)
+{
+	char str[INET6_ADDRSTRLEN];
+
+	switch(ai->ai_family) {
+		case AF_INET:
+			inet_ntop(ai->ai_family,
+					&((struct sockaddr_in *)ai->ai_addr)->sin_addr,
+					str,
+					INET_ADDRSTRLEN);
+			printf("AF_INET(IPv4): %s\n", str);
+			break;
+		case AF_INET6:
+			inet_ntop(ai->ai_family,
+					&((struct sockaddr_in6 *)ai->ai_addr)->sin6_addr,
+					str,
+					INET6_ADDRSTRLEN);
+			printf("AF_INET6(IPv6): %s\n", str);
+			break;
+	}
+}
 
 int main(int argc, char *argv[])
 {
@@ -14,6 +38,8 @@ int main(int argc, char *argv[])
 	struct addrinfo hints;
 	struct addrinfo *res = NULL;
 	struct addrinfo *ai  = NULL;
+	struct addrinfo *ai_inet  = NULL;
+	struct addrinfo *ai_inet6  = NULL;
 	struct sockaddr_storage sa;
 	socklen_t sa_len;
 
@@ -22,7 +48,7 @@ int main(int argc, char *argv[])
 	int  read_size;
 
 	memset((void*)(&hints), 0, sizeof(struct addrinfo));
-	hints.ai_family   = AF_INET6;  // can accept IPv4 address
+	hints.ai_family   = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags    = AI_PASSIVE;
 
@@ -37,8 +63,28 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	ai = res;
-	ss = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
+	for (ai = res; ai != NULL; ai = ai->ai_next) {
+		if (ai->ai_family == AF_INET ) ai_inet  = ai;
+		if (ai->ai_family == AF_INET6) ai_inet6 = ai;
+	}
+
+	if (ai_inet == NULL && ai_inet6 == NULL) {
+		fprintf(stderr, "getaddrinfo() return null results...\n");
+		return -1;
+	}
+
+	// socket (try ipv6 before ipv4)
+	ss = -1;
+	if (ai_inet6 != NULL) {
+		ss = socket(ai_inet6->ai_family, ai_inet6->ai_socktype, ai_inet6->ai_protocol);
+		ai = ai_inet6;
+		print_addrinfo(ai);
+	}
+	if (ai_inet != NULL && ss < -1) {
+		ss = socket(ai_inet->ai_family, ai_inet->ai_socktype, ai_inet->ai_protocol);
+		ai = ai_inet;
+		print_addrinfo(ai);
+	}
 	if (ss < 0) {
 		fprintf(stderr, "socket() failed...\n");
 		return -1;
