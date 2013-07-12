@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 		ai = ai_inet6;
 		print_addrinfo(ai);
 	}
-	if (ai_inet != NULL && ss < -1) {
+	if (ai_inet != NULL && ss < 0) {
 		ss = socket(ai_inet->ai_family, ai_inet->ai_socktype, ai_inet->ai_protocol);
 		ai = ai_inet;
 		print_addrinfo(ai);
